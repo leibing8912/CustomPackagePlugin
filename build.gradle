@@ -1,5 +1,5 @@
 group 'cn.jianke.gradle'
-version '1.0.0'
+version '1.0.1'
 
 apply plugin: 'groovy'
 apply plugin: 'maven'
