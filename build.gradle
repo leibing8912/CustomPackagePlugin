@@ -1,0 +1,75 @@
+group 'cn.jianke.gradle'
+version '1.0.0'
+
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+repositories {
+    jcenter()
+    maven {
+        url 'http://localhost:8081/nexus/content/repositories/jike_pkgplugin_release/'
+    }
+}
+
+dependencies {
+    compile gradleApi()
+}
+
+sourceSets {
+    main {
+        groovy { srcDirs = ['src/main/groovy'] }
+    }
+}
+
+// custom task for creating source jars
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = 'source'
+    from sourceSets.main.allSource
+}
+
+// add source jar tasks as artifacts
+artifacts { archives sourceJar }
+
+// upload to local
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            def username = getLocalProperty('repo_username')
+            def password = getLocalProperty('repo_password')
+            repository(url: 'http://localhost:8081/nexus/content/repositories/jike_pkgplugin_release/') {
+                authentication(
+                        userName: "$username",
+                        password: "$password"
+                )
+            }
+            snapshotRepository(url: 'http://localhost:8081/nexus/content/repositories/jike_pkgplugin_release/') {
+                authentication(
+                        userName: "$username",
+                        password: "$password"
+                )
+            }
+            pom.project {
+                packaging 'jar'
+                name 'jike apk package gradle plugin'
+                
+                developers {
+                    developer {
+                        id 'leibing8912'
+                        name 'leibing'
+                        email 'leibing1989@126.com'
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+def getLocalProperty(key) {
+    File propFile = new File('local.properties');
+    if (!propFile.exists())
+        return;
+    def Properties prop = new Properties();
+    prop.load(new FileInputStream(propFile));
+    return prop.getProperty(key);
+}
