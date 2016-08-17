@@ -106,7 +106,7 @@ class PackagePlugin implements Plugin<Project> {
         def versionName = project.extensions.android.defaultConfig.versionName;
         def releaseTime = getNow();
         def modifyVersion = getModifyVersion();
-        def fileName = project.ymPkg.nameHead+ "_" + versionName + ".build-" + releaseTime + "" + modifyVersion;
+        def fileName = project.jkPkg.nameHead+ "_" + versionName + ".build-" + releaseTime + "" + modifyVersion;
         switch (buildType) {
             case "debug":
                 return;
